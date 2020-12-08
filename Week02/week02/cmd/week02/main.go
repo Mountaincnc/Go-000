@@ -4,7 +4,7 @@ import (
 	"fmt"
 	xerrors "github.com/pkg/errors"
 	"os"
-	"week02/internan/week02/biz"
+	"week02/internal/week02/biz"
 )
 
 func main() {
