@@ -45,12 +45,13 @@ func main() {
 	}
 }
 
-func startServer(addr string, handler http.Handler, stopped chan struct{}) error {
-	s := http.Server{
+func httpServer(addr string, handler http.Handler, stopped chan struct{}) error {
+	s := &http.Server{
 		Addr:              addr,
 		Handler:           handler,
 	}
 
+	// 监听context
 	go func() {
 		// 监听stopped channel 如果被关闭 则执行shutdown
 		<- stopped
@@ -60,15 +61,10 @@ func startServer(addr string, handler http.Handler, stopped chan struct{}) error
 	return s.ListenAndServe()
 }
 
+func startServer(addr string, handler http.Handler, stopped chan struct{}) error {
+	return httpServer(addr, handler, stopped)
+}
+
 func startDebug(pprofAdddr string, stopped chan struct{}) error {
-	debug := http.Server{
-		Addr:              pprofAdddr,
-		Handler:           http.DefaultServeMux,
-	}
-	go func() {
-		// 监听stopped channel 如果被关闭 则执行shutdown
-		<- stopped
-		debug.Shutdown(context.Background() )
-	}()
-	return debug.ListenAndServe()
+	return httpServer(pprofAdddr, http.DefaultServeMux, stopped)
 }
