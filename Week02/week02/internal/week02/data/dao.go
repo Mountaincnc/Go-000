@@ -2,6 +2,7 @@ package data
 
 import (
 	"database/sql"
+	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	xerrors "github.com/pkg/errors"
 )
@@ -23,8 +24,9 @@ func init() {
 
 func User(id int64) (*UserInfo, error) {
 	var info *UserInfo
-	if err := db.QueryRow(`select id, name from student where id = ?`, id).Scan(&info); err != nil {
-		return nil, xerrors.Wrapf(err, "get user failed id = %d", id)
+	querySql := fmt.Sprintf("select id, name from student where id = %v", id)
+	if err := db.QueryRow(querySql).Scan(&info); err != nil {
+		return nil, xerrors.Wrapf(sql.ErrNoRows,  fmt.Sprintf("querySql %s err: %v", querySql, err))
 	}
 
 	return info, nil
