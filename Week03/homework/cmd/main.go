@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"syscall"
 )
 
 func main() {
@@ -61,12 +62,13 @@ func sysSig(ctx context.Context) error {
 	sigCh := make(chan os.Signal)
 
 	// 监听signal
-	signal.Notify(sigCh)
+	signal.Notify(sigCh, os.Interrupt, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGINT)
 
 	for {
 		select {
 		case <- ctx.Done():
-			return fmt.Errorf("http server exited")
+			fmt.Println("http server exited")
+			return ctx.Err()
 		case s := <-sigCh:
 			return fmt.Errorf("get signal: %v\n", s)
 		}
