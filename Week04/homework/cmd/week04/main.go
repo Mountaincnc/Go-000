@@ -15,10 +15,14 @@ import (
 func main() {
 	g, ctx := errgroup.WithContext(context.Background())
 
+	// 初始化
 	artServ := InitializeArticle()
+
+	// 注册server
 	s := server.NewServer(":9090")
 	v1.RegisterArticleServer(s.Server, artServ)
 
+	// 监听信号
 	g.Go(func() error {
 		sigChan := make(chan os.Signal)
 
@@ -33,6 +37,7 @@ func main() {
 		}
 	})
 
+	// 启动server
 	g.Go(func() error {
 		return s.Run(ctx)
 	})
