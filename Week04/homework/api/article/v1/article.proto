@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option go_package = "Week04/homework/api/article/v1;v1";
+
+service Article {
+  rpc ContributeArticle (ArticleRequest) returns (ArticleReply);
+}
+
+message ArticleRequest {
+  int64 id = 1;
+  string title = 2;
+}
+
+message ArticleReply {
+  int64 id = 1;
+}
